@@ -19,6 +19,8 @@ public class SubarrayProduct {
      * @return
      */
     public static int subarray(int[] arr, int k){
+        if (k <= 1) return 0;
+
         int n = arr.length, count = 0, left = 0, right = 0, p = 1;
         while(right < n){
             p *= arr[right];
@@ -28,7 +30,7 @@ public class SubarrayProduct {
             }
             // 如果 p < k，则说明此时窗口中与arr[right]组成的子数组都满足此条件
             // 同时将窗口右侧向右移动
-            if(p <= k){
+            if(p < k){
                 count += right - left + 1;
             }
             right++;
@@ -37,27 +39,4 @@ public class SubarrayProduct {
         return count;
     }
 
-    public static int slideWin(int[] arr, int k, int length){
-        int product = 1, count = 0;
-        // 先初始化窗口里的子数组的乘积
-        for (int i = 0; i < length; i++) {
-            product *= arr[i];
-            if (product <= 1){
-                return 0;
-            }
-        }
-        if (product <= k && product >= 0){
-            count++;
-        }
-
-        // 以初始窗口为基础，每次向右挪动一个元素
-        for (int i = 0, j = length; j < arr.length; i++,j++) {
-            product = product / arr[i] * arr[j];
-            if (product <= k && product >= 0){
-                count++;
-            }
-        }
-
-        return count;
-    }
 }
