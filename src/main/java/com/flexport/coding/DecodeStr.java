@@ -1,9 +1,6 @@
 package com.flexport.coding;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -23,9 +20,16 @@ public class DecodeStr {
             put("22", "V");put("23", "W");put("24", "X");put("25", "Y");put("26", "Z");
         }
     };
+
+    static char[] mapping = new char[27];
+    static {
+        for (int i = 0; i < mapping.length - 1; i++) {
+            mapping[i + 1] = (char) ('A' + i);
+        }
+    }
     public static void main(String[] args) {
         String s = "111111111111111111111111111111111111111111111";
-        String a = "103";
+        String a = "1111111111";
         DecodeStr decoder = new DecodeStr();
         /*if (s == null || s.length() == 0 || s.charAt(0) == '0'){
             System.out.printf("ans:" + 0);
@@ -34,30 +38,48 @@ public class DecodeStr {
         decoder.dfs(s, 0, "");
         System.out.printf("ans:" + decoder.ans);*/
 
+//        System.out.printf("" + Arrays.toString(mapping));
         System.out.printf("ans:" + decoder.decode(a));
     }
 
-    public List<String> decode(String s){
-        List<String> ans = new ArrayList<>();
-        int l = s.length();
-        int[] dp = new int[l + 1];
-        dp[0] = 1;
+    /**
+     * 时间复杂度 O(2^n)
+     * @param s
+     * @return
+     */
+    public List<String> decode(String s) {
+        List<String> results = new ArrayList<>();
+        decodeHelper(s, 0, "", results);
+        return results;
+    }
 
-        for (int i = 1; i <= l; i++) {
-            // 第一种情况：仅以第i个字符组成子串
-            // 如果第i个字符(在Java中下标为i-1)不为0则可以解码，故dp[i] = dp[i - 1]；否则dp[i] = 0;
-            if (s.charAt(i - 1) != '0'){
-                dp[i] = dp[i - 1];
-                ans = contact(map.get(s.substring(i - 1, i)), ans);
-            }
-            // 第二种情况：以第 i - 1个字符和第i个字符组成子串
-            // 如果满足条件则此时dp[i] = dp[i - 2]，再加上前面第一种情况的个数
-            if (i > 1 && s.charAt(i - 2) != '0' && Integer.valueOf(s.substring(i - 2, i)) <= 26){
-                dp[i] += dp[i - 2];
-                ans = contact(map.get(s.substring(i - 2, i)), ans);
+    private void decodeHelper(String s, int index, String current, List<String> results) {
+        if (index == s.length()) {
+            results.add(current);
+            return;
+        }
+
+        // Skip '0' as it's not valid alone
+        if (s.charAt(index) == '0') return;
+
+        // Single digit decoding
+        int number = s.charAt(index) - '0';
+        decodeHelper(s, index + 1, current + mapping[number], results);
+
+        // Double digit decoding
+        if (index + 1 < s.length()) {
+            number = Integer.parseInt(s.substring(index, index + 2));//(s.charAt(index) - '0') * 10 + (s.charAt(index + 1) - '0');
+            if (number <= 26) {
+                decodeHelper(s, index + 2, current + mapping[number], results);
             }
         }
-        return dp[l] > 0 ? ans : new ArrayList<>();
+    }
+
+
+    private boolean isValid(String s) {
+        if (s.charAt(0) == '0') return false;
+        int value = Integer.parseInt(s);
+        return value >= 1 && value <= 26;
     }
 
     public List<String> contact(String str, List<String> oldList){
