@@ -4,6 +4,8 @@ import java.util.*;
 
 /**
  * 如何将一副扑克牌排序，限制条件是只能查看最上面的两张牌，交换最上面的两张牌，或是将最上面的一张牌放到这摞牌的最下面。不考虑牌的花色，请用Java实现
+ *
+ * 变形的冒泡排序
  */
 public class CardSorter {
     private Deque<Integer> deck;
