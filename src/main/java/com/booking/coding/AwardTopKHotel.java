@@ -4,6 +4,7 @@ import javafx.util.Pair;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
@@ -91,7 +92,7 @@ public class AwardTopKHotel {
                 2,5,3,7,1
         };
 
-        int[] topK = awardTopKHotels(hotelIds, reviews, positiveKeyWords, negativeKeywords, 2);
+        int[] topK = awardTopKHotels(hotelIds, reviews, positiveKeyWords, negativeKeywords, 9);
 
         for (int i : topK) {
             System.out.printf("" + i + ",");
@@ -101,10 +102,10 @@ public class AwardTopKHotel {
     }
 
     public static int[] awardTopKHotels(int[] hotelIds, String[] reviews, String positiveKeyWords, String negativeKeywords, int k){
-        int[] topKIds = new int[k];
+        int[] topKIds = new int[Math.min(k, hotelIds.length)];
 
-        List<String> positives = Arrays.asList(positiveKeyWords.split(" "));
-        List<String> negatives = Arrays.asList(negativeKeywords.split(" "));
+        List<String> positives = Arrays.asList(positiveKeyWords.split(" ")).stream().map(String::toLowerCase).collect(Collectors.toList());
+        List<String> negatives = Arrays.asList(negativeKeywords.split(" ")).stream().map(String::toLowerCase).collect(Collectors.toList());
 
 
         // MinHeap，root is the min node，order：score desc, id asc
@@ -113,7 +114,7 @@ public class AwardTopKHotel {
                 return 1;
             }else if (p1.getValue() < p2.getValue()){
                 return -1;
-            }else if (p1.getKey() > p2.getKey()){
+            }else if (p1.getKey() < p2.getKey()){
                 return 1;
             }else {
                 return -1;
@@ -123,20 +124,20 @@ public class AwardTopKHotel {
         // calculate score for each hotelId
         // then pair hotelId with scores;
         for (int i = 0; i < hotelIds.length; i++) {
-            Pair<Integer, Integer> pair = new Pair(hotelIds[i], calScore(hotelIds[i], reviews[i], positives, negatives));
+            Pair<Integer, Integer> pair = new Pair<>(hotelIds[i], calScore(hotelIds[i], reviews[i], positives, negatives));
 
             if (minHeap.size() < k){
                 minHeap.offer(pair);
             }else {
                 Pair<Integer, Integer> min = minHeap.peek();
-                if (pair.getValue() > min.getValue() || (pair.getValue() == min.getValue() && pair.getKey() < min.getKey())){
+                if (pair.getValue() > min.getValue() || (Objects.equals(pair.getValue(), min.getValue()) && pair.getKey() < min.getKey())){
                     minHeap.poll();
                     minHeap.offer(pair);
                 }
             }
         }
 
-        for (int i = 0; i < k && i < hotelIds.length; i++) {
+        for (int i = topKIds.length - 1; i >= 0; i--) {
             topKIds[i] = minHeap.poll().getKey();
         }
 
@@ -153,6 +154,7 @@ public class AwardTopKHotel {
             if (s.charAt(s.length() - 1) == '.' || s.charAt(s.length() - 1) == ','){
                 s = s.substring(0, s.length() - 1);
             }
+//            s = s.toLowerCase();
             if (positives.contains(s)){
                 score += 3;
             }
