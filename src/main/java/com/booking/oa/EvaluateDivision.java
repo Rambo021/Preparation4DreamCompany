@@ -1,10 +1,10 @@
 package com.booking.oa;
 
+import javafx.util.Pair;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author ooo
@@ -13,9 +13,18 @@ import java.util.Map;
  * @date 2024/8/22 17:27:58
  */
 public class EvaluateDivision {
-    Map<String, Map<String, Node>> nodeMap = new HashMap<>();
+    // 使用邻接图表示图
+    Map<String, List<Pair<String, Double>>> nodeMap = new HashMap<>();
     public static void main(String[] args) {
+        List<List<String>> equations = new ArrayList<>(Arrays.asList(Arrays.asList("a", "b"), Arrays.asList("b","c"), Arrays.asList("bc","cd"), Arrays.asList("cd","ef")));
+        double[] values = {1.5,2.5,5.0,3.0};
+        List<List<String>> queries = new ArrayList<>(Arrays.asList(Arrays.asList("a", "c"), Arrays.asList("c","b"), Arrays.asList("bc","cd"), Arrays.asList("cd","bc")));
 
+        EvaluateDivision e = new EvaluateDivision();
+        double[] result = e.calcEquation(equations, values, queries);
+        for (double v : result) {
+            System.out.println("" + v);
+        }
     }
     /**
      * maybe we could use a graph to reprensent the equations;
@@ -24,64 +33,68 @@ public class EvaluateDivision {
      * second one is how to search the route in this graph: BFS
      */
     public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
-        Node start = initNodes(equations, values);
+        // init map to represent the graph
+        initNodes(equations, values);
 
         double[] result = new double[queries.size()];
         for (int i = 0; i < queries.size(); i++) {
             List<String> query = queries.get(i);
-            double r = bfs(start, query);
+            Set<String> visited = new HashSet<>();
+            // dfs to find the path from start to end; calculate the temp through the search
+            double r = dfs(query.get(0), query.get(1), visited);
             result[i] = r;
         }
         return result;
     }
 
-    private double bfs(Node start, List<String> query) {
-        double result = 0.0;
+    private double dfs(String start, String end, Set<String> visited) {
+        double result = -1.0;
+
+        if (!nodeMap.containsKey(start) || !nodeMap.containsKey(end)){
+            return result;
+        }
+
+        if (start.equals(end)){
+            return -result;
+        }
+
+        visited.add(start);
+
+        for (Pair<String, Double> pair : nodeMap.get(start)) {
+            String next = pair.getKey();
+            if (visited.contains(next)){
+                continue;
+            }
+
+            double temp = dfs(next, end, visited);
+
+            if (temp != -1.0){
+                return temp * pair.getValue();
+            }
+        }
 
         return result;
     }
 
-    private Node initNodes(List<List<String>> equations, double[] values){
-        Node start = null;
+    /**
+     * initiate the map to represent a graph:
+     * a -> (b, 2.0)  b -> (a, 0.5)  b -> (c, 1.5)  c -> (b, 0.66667)
+     * so this is a path: a -> (c, 3.0)
+     * @param equations
+     * @param values
+     */
+    private void initNodes(List<List<String>> equations, double[] values){
         for(int i = 0; i < values.length; i++){
             List<String> equation = equations.get(i);
             double value = values[i];
 
-            Node node = new Node(equation.get(0), equation.get(1), value);
-            Node revertNode = new Node(equation.get(1), equation.get(0), div(1, value));
-            node.next = revertNode;
-            revertNode.next = node;
+            Pair pair = new Pair(equation.get(1), value);
+            Pair revertPair = new Pair(equation.get(0), 1.0 / value);
+            nodeMap.putIfAbsent(equation.get(0), new ArrayList<>());
+            nodeMap.putIfAbsent(equation.get(1), new ArrayList<>());
 
-            if(i == 0){
-                start = node;
-            }
-            /*Map<String, Node> secNode = new HashMap(){
-                {
-                    put(equation.get(1), node);
-                }
-            };
-            nodeMap.put(equation.get(0), secNode);*/
-        }
-        return start;
-    }
-
-    private double div(double a, double b){
-        BigDecimal bdA = new BigDecimal(Double.toString(a));
-        BigDecimal bdB = new BigDecimal(Double.toString(b));
-        BigDecimal result = bdA.divide(bdB, 5, RoundingMode.HALF_UP);
-        return result.doubleValue();
-    }
-    static class Node{
-        private String start;
-        private String end;
-        private double value;
-
-        private Node next;
-
-        public Node(String start, String end, double value) {
-            this.start = start;
-            this.end = end;
-            this.value = value;
+            nodeMap.get(equation.get(0)).add(pair);
+            nodeMap.get(equation.get(1)).add(revertPair);
         }
     }
 }
