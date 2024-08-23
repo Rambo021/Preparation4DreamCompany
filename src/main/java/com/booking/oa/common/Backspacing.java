@@ -1,4 +1,4 @@
-package com.booking.oa;
+package com.booking.oa.common;
 
 /**
  * @author ooo
