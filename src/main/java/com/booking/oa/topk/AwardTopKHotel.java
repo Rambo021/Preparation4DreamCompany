@@ -2,10 +2,7 @@ package com.booking.oa.topk;
 
 import javafx.util.Pair;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -104,8 +101,8 @@ public class AwardTopKHotel {
     public static int[] awardTopKHotels(int[] hotelIds, String[] reviews, String positiveKeyWords, String negativeKeywords, int k){
         int[] topKIds = new int[Math.min(k, hotelIds.length)];
 
-        List<String> positives = Arrays.asList(positiveKeyWords.split(" ")).stream().map(String::toLowerCase).collect(Collectors.toList());
-        List<String> negatives = Arrays.asList(negativeKeywords.split(" ")).stream().map(String::toLowerCase).collect(Collectors.toList());
+        Set<String> positives = Arrays.asList(positiveKeyWords.split(" ")).stream().map(String::toLowerCase).collect(Collectors.toSet());
+        Set<String> negatives = Arrays.asList(negativeKeywords.split(" ")).stream().map(String::toLowerCase).collect(Collectors.toSet());
 
 
         // MinHeap，root is the min node，order：score desc, id asc
@@ -146,7 +143,7 @@ public class AwardTopKHotel {
 
 
     // calculate score for each hotelId
-    public static int calScore(int id, String review, List<String> positives, List<String> negatives){
+    public static int calScore(int id, String review, Set<String> positives, Set<String> negatives){
         int score = 0;
 
         String[] reviewWords = review.split(" ");

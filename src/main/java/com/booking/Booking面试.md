@@ -32,3 +32,4 @@
 11. https://leetcode.com/discuss/interview-experience/2411840/Interview-experience-Reject
 12. https://leetcode.com/discuss/interview-experience/3380756/Meeting-Bookings-Question-for-a-startup
 13. https://leetcode.com/discuss/interview-experience/2086386/Booking.com-or-SDE-2-or-Amsterdam-or-2022-Offer
+14. https://leetcode.com/discuss/interview-question/1431676/Booking.com-Award-Top-K-Hotels-OA-HackerRank
