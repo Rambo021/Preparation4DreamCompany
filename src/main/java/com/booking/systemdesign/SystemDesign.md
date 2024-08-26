@@ -5,3 +5,4 @@
 There was a lot of discussion about handling different type of cases, how the hotel booking services will update the external service when they've booked a room, collision cases, and how to make this design extensible.
 
 
+https://leetcode.com/discuss/interview-experience/2134024/Booking.com-or-Core-Backend-Engineer-or-Amsterdam-or-Offer

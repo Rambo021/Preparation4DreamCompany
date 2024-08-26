@@ -2,7 +2,7 @@ package com.booking.onsite.dfs;
 
 /**
  * @author ooo
- * @description 超难的TSP问题
+ * @description 超难的TSP问题：状态压缩DP
  * @date 2024/8/21 14:02:58
  * https://www.geeksforgeeks.org/problems/travelling-salesman-problem2732/1
  *
@@ -37,4 +37,38 @@ package com.booking.onsite.dfs;
  * 1 <= cost[i][j] <= 103
  */
 public class TravellingSalesmanProblem {
+
+    public int total_cost(int[][] cost) {
+        // Code here
+        int n = cost.length;
+        // init the dp with -1 to store the optimal cost
+        int[][] dp = new int[1 << n ][n];
+
+        return tsp(1, 0, n, cost, dp);
+    }
+
+    /**
+     * mask: the flag represents visited city(bit i == 1 or 0)
+     * pos: current position
+     *
+     */
+    private int tsp(int mask, int pos, int n, int[][] cost, int[][] dp){
+        // exit: if all the cities have been visited, return the cost from pos to starting city
+        if(mask == (1 << n) - 1){
+            return cost[pos][0];
+        }
+
+        if(dp[mask][pos] == 0){
+            dp[mask][pos] = Integer.MAX_VALUE;
+
+            for(int city = 0; city < n; city++){
+                //
+                if((mask & (1 << city)) == 0){
+                    dp[mask][pos] = Math.min(dp[mask][pos], cost[pos][city] + tsp(mask | (1 << city), city, n, cost, dp));
+                }
+            }
+        }
+
+        return dp[mask][pos];
+    }
 }
