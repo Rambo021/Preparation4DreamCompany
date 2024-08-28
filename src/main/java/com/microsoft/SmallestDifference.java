@@ -31,6 +31,31 @@ public class SmallestDifference {
 //        Arrays.sort(b);
 //        System.out.printf("" + binarySearch(1111, b));
     }
+
+    public static long smallestDifference2(int[] a, int[] b){
+        long minDif = Long.MAX_VALUE;
+        Arrays.sort(a);
+        Arrays.sort(b);
+
+        int p1 = 0, p2 = 0;
+        while(p1 < a.length && p2 < b.length){
+            if(a[p1] == b[p2]){
+                return 0;
+            }
+            // calculate the diff with a[p1] and b[p2]
+            long dif = a[p1] - b[p2];
+            minDif = Math.min(Math.abs(dif), minDif);
+
+            // let's see which is bigger between a[p1] and b[p2], it decides the movement of the two pointers
+            if(dif <= 0){// a[p1] <= b[p2], so the dif is the min in a[p1] with all the eles in b, we move p1
+                p1++;
+            }else{ // a[p1] > b[p2], we should find the bigger num in b, so move p2; but must limit p2 in index
+                p2++;
+            }
+        }
+
+        return (int)minDif;
+    }
     /**
      * {1,2,3,11,15,22}
      * {8,19,23,127,235}
