@@ -16,7 +16,7 @@ public class MedianInDataStream {
     int count = 0;
     public static void main(String[] args) {
         MedianInDataStream m = new MedianInDataStream();
-        int k = 30;
+        int k = 10;
         int[] nums = new int[k];
         for (int i = 1; i <= k; i++) {
             nums[i - 1] = i;
@@ -35,19 +35,16 @@ public class MedianInDataStream {
      * @param num
      */
     public void addNum4Ninetieth(int num){
-        // 将新数添加到大顶堆
+        // 将新数添加到小顶堆
         minHeap.offer(num);
         count++;
 
-        // 调整堆的大小
+        // 小顶堆只存放后10%的元素，多余的元素放到大顶堆，最后可以得到：大顶堆降序的前90%元素，小顶堆存放升序的后10%的元素
+        // 如 大顶堆[7,6,5,4,3,2,1], 小顶堆[8,9,10]
         if (minHeap.size() > (count * 1) / 10 + 1) {
             maxHeap.offer(minHeap.poll());
         }
 
-        // 确保堆的大小差异不超过1
-        /*if (maxHeap.size() > minHeap.size()) {
-            minHeap.offer(maxHeap.poll());
-        }*/
     }
 
     public double find90th(){
