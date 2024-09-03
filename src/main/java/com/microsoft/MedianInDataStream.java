@@ -8,26 +8,48 @@ import java.util.PriorityQueue;
  * @description 寻找数据流中的特定位置的数(中位数 、 90%)
  *
  * 我们使用大顶堆 + 小顶堆 存储这些数字
+ *
+ * 如果是内存有限，则
  * @date 2024/9/3 13:48:15
  */
 public class MedianInDataStream {
     PriorityQueue<Integer> minHeap = new PriorityQueue<>();
     PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+    int maxSize = 18, minSize = 101;
     int count = 0;
     public static void main(String[] args) {
         MedianInDataStream m = new MedianInDataStream();
-        int k = 10;
+        int k = 1000;
         int[] nums = new int[k];
         for (int i = 1; i <= k; i++) {
             nums[i - 1] = i;
         }
         for (int num : nums) {
-            m.addNum4Ninetieth(num);
+            m.addNum4NinetiethInLimitMem(num);
+//            m.addNum4Ninetieth(num);
 //            m.addNum4Median(num);
         }
 
         System.out.printf("" + m.find90th());
 //        System.out.printf("" + m.findMedian());
+    }
+
+    public void addNum4NinetiethInLimitMem(int num){
+        // 将新数添加到小顶堆
+        if (minHeap.size() < minSize){
+            minHeap.offer(num);
+        }else if (minHeap.peek() < num){
+            minHeap.poll();
+            minHeap.offer(num);
+        }
+        count++;
+
+        // 小顶堆只存放后10%的元素，多余的元素放到大顶堆，最后可以得到：大顶堆降序的前90%元素，小顶堆存放升序的后10%的元素
+        // 如 大顶堆[7,6,5,4,3,2,1], 小顶堆[8,9,10]
+        if (minHeap.size() > (count * 1) / 10 + 1) {
+            minHeap.poll();
+        }
+
     }
 
     /**
