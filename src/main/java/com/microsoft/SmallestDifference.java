@@ -32,6 +32,16 @@ public class SmallestDifference {
 //        System.out.printf("" + binarySearch(1111, b));
     }
 
+    /**
+     * [1,2,3,11,15]
+     * [8,19,23]
+     * 排序后，双指针计算两个数的差
+     * 此题的问题在于，注意int会超精度，所以使用long保存两数之差
+     * 如果两数之差等于0则返回0；如果小于0，说明p1的数小于p2的数，移动p1；反之移动p2
+     * @param a
+     * @param b
+     * @return
+     */
     public static long smallestDifference2(int[] a, int[] b){
         long minDif = Long.MAX_VALUE;
         Arrays.sort(a);
@@ -47,7 +57,7 @@ public class SmallestDifference {
             minDif = Math.min(Math.abs(dif), minDif);
 
             // let's see which is bigger between a[p1] and b[p2], it decides the movement of the two pointers
-            if(dif <= 0){// a[p1] <= b[p2], so the dif is the min in a[p1] with all the eles in b, we move p1
+            if(dif <= 0){// a[p1] <= b[p2], so the dif is the min in a[p1] with all the else in b, we move p1
                 p1++;
             }else{ // a[p1] > b[p2], we should find the bigger num in b, so move p2; but must limit p2 in index
                 p2++;
