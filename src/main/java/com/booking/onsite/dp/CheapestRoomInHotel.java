@@ -21,14 +21,56 @@ public class CheapestRoomInHotel {
         rooms.add(new Room(1, 180, 1));
         rooms.add(new Room(2, 250, 2));
         rooms.add(new Room(3, 200, 3));
-        rooms.add(new Room(4, 180, 2));
-        rooms.add(new Room(5, 150, 5));
+        rooms.add(new Room(4, 190, 2));
+        rooms.add(new Room(5, 350, 5));
 
-        int requiredGuests = 6;
-        System.out.println("" + c.cheapestPrice(rooms, requiredGuests));
-        System.out.println("" + c.findCheapestRooms(rooms, requiredGuests).stream().map(Objects::toString).collect(Collectors.joining(",")));
+        int requiredGuests = 4;
+        List<Room> roomList = c.findCheapestRoomsDP(rooms, requiredGuests);
+        System.out.println("" + roomList.stream().mapToInt(p -> p.price).sum());
+        System.out.println("" + roomList.stream().map(Objects::toString).collect(Collectors.joining(",")));
     }
 
+    public List<Room> findCheapestRoomsDP(List<Room> rooms, int totalGuests) {
+        // 按价格升序排序房间
+//        Collections.sort(rooms, Comparator.comparingInt(r -> r.price));
+
+        int n = rooms.size();
+        int[][] dp = new int[n + 1][totalGuests + 1];
+
+        // 初始化 dp 数组
+        for (int i = 0; i <= totalGuests; i++) {
+            dp[0][i] = Integer.MAX_VALUE;
+        }
+        dp[0][0] = 0;
+
+        // 动态规划填充 dp 数组
+        for (int i = 1; i <= n; i++) {
+            for (int j = 0; j <= totalGuests; j++) {
+                dp[i][j] = dp[i-1][j];
+                if (j >= rooms.get(i-1).guests && dp[i-1][j - rooms.get(i-1).guests] != Integer.MAX_VALUE) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i-1][j - rooms.get(i-1).guests] + rooms.get(i-1).price);
+                }
+            }
+        }
+
+        // 如果无法容纳所有客人，返回空列表
+        if (dp[n][totalGuests] == Integer.MAX_VALUE) {
+            return new ArrayList<>();
+        }
+
+        // 回溯找出选择的房间
+        List<Room> selectedRooms = new ArrayList<>();
+        int i = n, j = totalGuests;
+        while (i > 0 && j > 0) {
+            if (dp[i][j] != dp[i-1][j]) {
+                selectedRooms.add(rooms.get(i-1));
+                j -= rooms.get(i-1).guests;
+            }
+            i--;
+        }
+
+        return selectedRooms;
+    }
     public static List<Room> findCheapestRooms2(List<Room> rooms, int totalGuests) {
         int n = rooms.size();
         int[] dp = new int[totalGuests + 1];
@@ -140,7 +182,7 @@ public class CheapestRoomInHotel {
      * @return
      */
     public int cheapestPrice(List<Room> rooms, int guestAmount){
-        int lowest = Integer.MAX_VALUE;
+        /*int lowest = Integer.MAX_VALUE;
         for (Room room : rooms) {
             if (room.guests >= guestAmount && room.price < lowest){
                 lowest = room.price;
@@ -148,7 +190,7 @@ public class CheapestRoomInHotel {
         }
         if (lowest != Integer.MAX_VALUE){
             return lowest;
-        }
+        }*/
 
         int[] dp = new int[guestAmount + 1];
         for (int i = 1; i < dp.length; i++) {
@@ -167,6 +209,35 @@ public class CheapestRoomInHotel {
         }
 
         return dp[guestAmount] == Integer.MAX_VALUE ? -1 : dp[guestAmount];
+    }
+
+    /**
+     * dp[i][j] 表示从0到i的房间里任取房间，满足住j个人的最便宜的费用
+     * dp[0][j] 初始化为第0个房间分别住0到j个人的最低
+     * dp[i][j] = if
+     * @param rooms
+     * @param guestAmount
+     * @return
+     */
+    public int cheapestPrice2(List<Room> rooms, int guestAmount){
+        int[][] dp = new int[rooms.size() + 1][guestAmount + 1];
+        /*for (int i = 1; i < dp.length; i++) {
+            dp[i] = Integer.MAX_VALUE;
+        }
+
+        for (Room room : rooms) {
+            // 对于每个room，检查能够住几个人，比如room最多住5个人而旅行团有12个人，那么dp[12]就可以由dp[7] + room.price得到；
+            // 同理，dp[11]可以由dp[6] + room.price得到
+            // 条件是 dp[7],dp[6]已经计算出来了
+            for (int i = guestAmount; i >= room.guests; i--) {
+                if(dp[i - room.guests] != Integer.MAX_VALUE){
+                    dp[i] = Math.min(dp[i], dp[i - room.guests] + room.price);
+                }
+            }
+        }
+
+        return dp[guestAmount] == Integer.MAX_VALUE ? -1 : dp[guestAmount];*/
+        return 0;
     }
 
     /**
