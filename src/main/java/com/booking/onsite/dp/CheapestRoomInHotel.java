@@ -15,19 +15,60 @@ import java.util.stream.Collectors;
  */
 public class CheapestRoomInHotel {
 
+    private static List<Room> bestRooms = new ArrayList<>();
+    private static int minCost = Integer.MAX_VALUE;
+
     public static void main(String[] args) {
         CheapestRoomInHotel c = new CheapestRoomInHotel();
         List<Room> rooms = new ArrayList<>();
         rooms.add(new Room(1, 180, 1));
-        rooms.add(new Room(2, 250, 2));
-        rooms.add(new Room(3, 200, 3));
-        rooms.add(new Room(4, 190, 2));
-        rooms.add(new Room(5, 350, 5));
+        rooms.add(new Room(2, 200, 2));
+        rooms.add(new Room(3, 300, 3));
+        rooms.add(new Room(4, 160, 2));
+        rooms.add(new Room(5, 150, 5));
+        /*rooms.add(new Room(1, 180, 1)); // 1 guest
+        rooms.add(new Room(2, 150, 2)); // 2 guests
+        rooms.add(new Room(3, 200, 2)); // 2 guests
+        rooms.add(new Room(4, 100, 1)); // 1 guest
+        rooms.add(new Room(5, 120, 3)); // 3 guests*/
 
-        int requiredGuests = 4;
-        List<Room> roomList = c.findCheapestRoomsDP(rooms, requiredGuests);
+        int requiredGuests = 10;
+        List<Room> roomList = c.findCheapestRooms3(rooms, requiredGuests);
         System.out.println("" + roomList.stream().mapToInt(p -> p.price).sum());
         System.out.println("" + roomList.stream().map(Objects::toString).collect(Collectors.joining(",")));
+    }
+
+    public static List<Room> findCheapestRooms3(List<Room> rooms, int totalGuests) {
+        // Sort the rooms by price (ascending)
+        Collections.sort(rooms, Comparator.comparingInt(room -> room.price));
+
+        // Backtrack to find the best combination of rooms
+        backtrack(rooms, totalGuests, new ArrayList<>(), 0, 0);
+        return bestRooms;
+    }
+
+    private static void backtrack(List<Room> rooms, int remainingGuests, List<Room> currentRooms, int currentCost, int start) {
+        // If we have met the guest requirement, check if we have a new minimum cost
+        if (remainingGuests <= 0) {
+            if (currentCost < minCost) {
+                minCost = currentCost;
+                bestRooms = new ArrayList<>(currentRooms);
+            }
+            return;
+        }
+
+        // Start from the current room index to avoid rechecking previous rooms
+        for (int i = start; i < rooms.size(); i++) {
+            Room room = rooms.get(i);
+            // If adding this room exceeds the current minimum cost, stop further exploration
+            if (currentCost + room.price >= minCost) {
+                continue;
+            }
+
+            currentRooms.add(room);
+            backtrack(rooms, remainingGuests - room.guests, currentRooms, currentCost + room.price, i + 1);
+            currentRooms.remove(currentRooms.size() - 1); // Backtrack
+        }
     }
 
     public List<Room> findCheapestRoomsDP(List<Room> rooms, int totalGuests) {
@@ -209,35 +250,6 @@ public class CheapestRoomInHotel {
         }
 
         return dp[guestAmount] == Integer.MAX_VALUE ? -1 : dp[guestAmount];
-    }
-
-    /**
-     * dp[i][j] 表示从0到i的房间里任取房间，满足住j个人的最便宜的费用
-     * dp[0][j] 初始化为第0个房间分别住0到j个人的最低
-     * dp[i][j] = if
-     * @param rooms
-     * @param guestAmount
-     * @return
-     */
-    public int cheapestPrice2(List<Room> rooms, int guestAmount){
-        int[][] dp = new int[rooms.size() + 1][guestAmount + 1];
-        /*for (int i = 1; i < dp.length; i++) {
-            dp[i] = Integer.MAX_VALUE;
-        }
-
-        for (Room room : rooms) {
-            // 对于每个room，检查能够住几个人，比如room最多住5个人而旅行团有12个人，那么dp[12]就可以由dp[7] + room.price得到；
-            // 同理，dp[11]可以由dp[6] + room.price得到
-            // 条件是 dp[7],dp[6]已经计算出来了
-            for (int i = guestAmount; i >= room.guests; i--) {
-                if(dp[i - room.guests] != Integer.MAX_VALUE){
-                    dp[i] = Math.min(dp[i], dp[i - room.guests] + room.price);
-                }
-            }
-        }
-
-        return dp[guestAmount] == Integer.MAX_VALUE ? -1 : dp[guestAmount];*/
-        return 0;
     }
 
     /**
