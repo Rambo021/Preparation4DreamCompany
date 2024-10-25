@@ -70,7 +70,7 @@ public class Solution{
       if(node.left == null && node.right == null){
         ans.add(node.val);
       }else{
-        // 如果左右子节点不为空则先入栈，因为时先入后出，所以一定是先将右子节点入栈
+        // 如果左右子节点不为空则先入栈，因为是先入后出，所以一定是先将右子节点入栈
         if(node.right != null){
           s.push(node.right);
           node.right = null;
