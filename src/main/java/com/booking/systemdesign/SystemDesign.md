@@ -6,3 +6,4 @@ There was a lot of discussion about handling different type of cases, how the ho
 
 
 https://leetcode.com/discuss/interview-experience/2134024/Booking.com-or-Core-Backend-Engineer-or-Amsterdam-or-Offer
+https://leetcode.com/discuss/interview-experience/538560/Booking.com-Interview-Experience-(Senior-Software-Engineer)-Feb-25-Reject
