@@ -8,9 +8,10 @@
 
    > Sure, let me introduce myself. 
    >
-   > My name is Rambo, I graduated from Shanghai University of Electric Power in 2015 with a Bachelor's in Computer Science and Technology. 
+   > My name is PanYong, just call me Rambo, I graduated from Shanghai University of Electric Power in 2015 with a Bachelor's in Computer Science and Technology. 
    >
-   > I'm a Senior software Engineer with 9 years of experience, mostly in eCommerce**/ˈkɑːmɜːrs/** industry, such as Goods, Order, Payment.
+   > I‘ve been working as a backend engineer for about 9 years now.
+   > Most recently, I've been a Java Tech Lead at Zhongtong BlueNet, where I led a small team to develop an eCommerce system and implemented AI to improve our cor business functions.
    >
    > Throughout my career, I've worked with companies like Zhongtong, Coupang, and Zhongan, where I've honed**/hoʊnd/** my skills in system design, team collaboration, and software quality management. 
    >
