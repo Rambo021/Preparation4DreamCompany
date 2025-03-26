@@ -120,3 +120,45 @@ public class Solution{
 }
 ```
 
+
+
+#### 二叉搜索树的中序遍历
+
+> 二叉搜索树的中序遍历是递增数组，可以利用这个特性进行一些操作。
+>
+> 
+>
+> 给你一个二叉搜索树的根节点 `root` ，返回 **树中任意两不同节点值之间的最小差值** 。
+>
+> 差值是一个正数，其数值等于两值之差的绝对值。
+
+```java
+class Solution {
+    private int min = 10000000;
+    private TreeNode prev = null;
+    /**
+    * 递归中序遍历，计算 前后两个节点的差
+     */
+    public int getMinimumDifference(TreeNode root) {
+        helper(root);
+        return min;
+    }
+
+    public void helper(TreeNode root){
+        if(root == null){
+            return;
+        }
+
+        helper(root.left);
+
+        if(prev != null){
+            min = Math.min(root.val - prev.val, min);
+        }
+
+        prev = root;
+
+        helper(root.right);
+    }
+}
+```
+

@@ -1,4 +1,4 @@
-package com.booking.onsite.dp;
+package com.booking.onsite.recursion;
 
 import java.util.*;
 import java.util.stream.Collectors;
